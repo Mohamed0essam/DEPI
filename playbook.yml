@@ -1,12 +1,6 @@
 ---
-- name: Configure Nginx and Debug Tools on localhost
-  hosts: local
-  vars_prompt:
-    - name: additional_package
-      prompt: "Please enter the name of an additional package to install"
-      private: no
+- hosts: all
+  become: yes
   roles:
-    - role: nginx
-    - role: debug
-      vars:
-        additional_package: "{{ additional_package }}"
+    - docker_setup
+    - nginx_container
