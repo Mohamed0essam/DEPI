@@ -1,0 +1,8 @@
+---
+- name: Ensure the Nginx container is running
+  community.docker.docker_container:
+    name: nginx
+    image: nginx:latest
+    state: started
+    ports:
+      - "3000:80"

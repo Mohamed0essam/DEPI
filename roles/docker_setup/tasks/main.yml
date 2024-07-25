@@ -1,0 +1,17 @@
+---
+- name: Ensure Docker is installed
+  ansible.builtin.package:
+    name: docker
+    state: present
+
+- name: Ensure Docker service is enabled and started
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Add user to Docker group
+  ansible.builtin.user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: yes
