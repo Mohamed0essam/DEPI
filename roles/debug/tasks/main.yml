@@ -1,0 +1,43 @@
+---
+- name: Define a list of debug packages
+  set_fact:
+    debug_packages:
+      - htop
+      - strace
+      - lsof
+
+- name: Install debug packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop: "{{ debug_packages }}"
+  register: debug_installation_results
+  changed_when: false
+
+- name: Check if any debug package was installed or updated
+  set_fact:
+    debug_installation_changed: "{{ debug_installation_results.results | selectattr('changed', 'equalto', true) | list | length > 0 }}"
+
+- name: Install the additional package
+  ansible.builtin.apt:
+    name: "{{ additional_package }}"
+    state: present
+    update_cache: yes
+  register: additional_package_installation
+  changed_when: false
+
+- name: Check if additional package was installed or updated
+  set_fact:
+    additional_package_changed: "{{ additional_package_installation.changed }}"
+
+- name: Print installation results for debug packages
+  ansible.builtin.debug:
+    msg: "Installed {{ item.item }} with result: {{ item }}"
+  loop: "{{ debug_installation_results.results }}"
+  when: item.changed
+
+- name: Print installation result for additional package
+  ansible.builtin.debug:
+    msg: "Installed {{ additional_package }} with result: {{ additional_package_installation }}"
+  when: additional_package_installation.changed
